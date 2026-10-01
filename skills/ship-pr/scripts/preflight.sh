@@ -61,4 +61,5 @@ fi
 
 if command -v ffmpeg >/dev/null; then ok "ffmpeg"; else ui_check "ffmpeg (GIF conversion)" "$pm ffmpeg"; fi
 
+if [ "$fail" = 1 ]; then echo "preflight: FAILED (exit 1)"; else echo "preflight: passed (exit 0)"; fi
 exit "$fail"

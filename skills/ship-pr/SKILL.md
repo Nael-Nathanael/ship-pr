@@ -2,6 +2,7 @@
 name: ship-pr
 description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with screenshots and a GIF or video. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
 argument-hint: <task>
+allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh:*)
 license: MIT
 compatibility: Needs git, shell access and a forge CLI (gh, glab or equivalent). Browser automation (Playwright) and ffmpeg are used for UI evidence when available.
 metadata:
@@ -81,13 +82,21 @@ your harness has its own plan file or plan mode, use that for the plan instead.
 
 ## Gate 0: Preflight
 
-Run the dependency check from the repository root before anything else. The
-path is relative to this skill's folder; resolve it to wherever the skill is
-installed.
+The dependency check runs before anything else. In Claude Code it already ran
+when this skill loaded, and its result is here:
+
+!`bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh`
+
+If the line above still shows the command rather than its output, your agent
+did not run it: run it yourself from the repository root, with the path
+resolved to this skill's folder:
 
 ```bash
-bash <skill-dir>/scripts/preflight.sh        # add --ui when the change touches a UI
+bash <skill-dir>/scripts/preflight.sh
 ```
+
+Run it again with `--ui` once the plan shows the change touches a UI, since
+that makes the browser-evidence tools required.
 
 It prints `ok`, `warn` or `MISSING` per tool, each with the fix command, and
 exits 1 when something required is missing.
