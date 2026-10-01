@@ -1,0 +1,19 @@
+{
+  "skill_name": "ship-pr",
+  "evals": [
+    {
+      "id": 0,
+      "name": "feature-tip-percentage",
+      "prompt": "In the bill splitter app, add a tip percentage field. The tip gets added to the total before it's split between people. Leave it optional, default no tip.",
+      "expected_output": "Work on a branch off main, a plan challenged by an independent reviewer, unit + integration + end-to-end tests, browser evidence, and a PR description. The fixture's origin is a local bare repo with no forge, so the PR cannot be opened: the run must say it is not done and name that gate.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "bugfix-rounding",
+      "prompt": "bug in the bill splitter: split 100 between 3 people and you get 33.33 three times, that's 99.99, a cent goes missing. the shares have to add up to the total. pls fix",
+      "expected_output": "A regression test that fails before the fix, the fix on a branch, before/after evidence, a PR description, and an honest not-done report because no PR can be opened.",
+      "files": []
+    }
+  ]
+}

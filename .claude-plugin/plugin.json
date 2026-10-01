@@ -1,0 +1,6 @@
+{
+  "name": "ship-pr",
+  "version": "1.0.0",
+  "description": "Delivery workflow where done means an open PR with proof attached.",
+  "license": "MIT"
+}
