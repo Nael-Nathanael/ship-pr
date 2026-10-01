@@ -50,6 +50,17 @@ and refactor requests.
 
 ## What the agent needs
 
+The skill checks these itself before starting (`scripts/preflight.sh`). If a
+required tool is missing, the agent stops, shows the install command, and asks
+before installing anything. To check your machine yourself, run this from any
+repo:
+
+```bash
+bash ~/.agents/skills/ship-pr/scripts/preflight.sh --ui
+```
+
+The path depends on where your agent keeps skills; `.claude/skills/` for Claude Code.
+
 - git, and a forge CLI that is logged in: `gh` for GitHub, `glab` or an API
   token for GitLab.
 - `gh` 2.99.0 or later to attach screenshots and video to a GitHub PR. Older

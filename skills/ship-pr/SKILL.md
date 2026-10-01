@@ -79,6 +79,31 @@ What does not shrink: the branch, the tests that prove it, and the PR.
 Use `$WORK/plan.md`, `$WORK/challenge.md` and `$WORK/evidence/` throughout. If
 your harness has its own plan file or plan mode, use that for the plan instead.
 
+## Gate 0: Preflight
+
+Run the dependency check from the repository root before anything else. The
+path is relative to this skill's folder; resolve it to wherever the skill is
+installed.
+
+```bash
+bash <skill-dir>/scripts/preflight.sh        # add --ui when the change touches a UI
+```
+
+It prints `ok`, `warn` or `MISSING` per tool, each with the fix command, and
+exits 1 when something required is missing.
+
+- On exit 1, stop and show the user the `MISSING` lines with their fix
+  commands. Ask before running any of them: installing software changes their
+  machine. Run the check again after they are fixed.
+- Project-level installs the repo already expects, such as
+  `npx playwright install chromium` in a repo that has Playwright as a
+  dependency, you may run without asking.
+- `warn` lines do not block, but each one becomes a gap you must name in the
+  PR if it stops a gate from passing.
+
+The check takes seconds, and a missing `gh` found here costs a minute. Found
+at gate 7, after an hour of work, it costs the evidence.
+
 ## Gate 1: Branch
 
 ```bash
