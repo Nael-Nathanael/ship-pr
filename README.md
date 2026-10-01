@@ -33,22 +33,20 @@ npx skills add Nael-Nathanael/ship-pr          # this project
 npx skills add Nael-Nathanael/ship-pr -g       # all your projects
 ```
 
-Claude Code, as a plugin:
-
-```bash
-claude plugin marketplace add Nael-Nathanael/ship-pr
-claude plugin install ship-pr@ship-pr
-```
-
 Or copy `skills/ship-pr/` into your agent's skills directory:
 `.agents/skills/` for most agents, `.claude/skills/` for Claude Code.
 
 ## Use
 
-Ask for a change as you normally would ("add a tip field to the checkout
-form"). The skill is picked up automatically for build, fix and refactor
-requests. To call it explicitly: `/ship-pr` in Claude Code, Cursor and
-Antigravity, `$ship-pr` in Codex.
+```
+/ship-pr add a tip field to the checkout form
+/ship-pr fix #142
+```
+
+That is `/ship-pr <task>` in Claude Code, Cursor and Antigravity, and
+`$ship-pr <task>` in Codex. The task can be a sentence, an issue number or URL,
+or a pasted ticket. Agents also pick the skill up on their own for build, fix
+and refactor requests.
 
 ## What the agent needs
 

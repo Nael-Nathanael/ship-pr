@@ -1,6 +1,7 @@
 ---
 name: ship-pr
 description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with screenshots and a GIF or video. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
+argument-hint: <task>
 license: MIT
 compatibility: Needs git, shell access and a forge CLI (gh, glab or equivalent). Browser automation (Playwright) and ffmpeg are used for UI evidence when available.
 metadata:
@@ -15,6 +16,14 @@ that is progress. This skill is the path from request to that PR.
 
 Passing tests on a local branch is not the finish line, because nobody else can
 see it, review it or merge it. Work that stops there gets lost or redone.
+
+## The task
+
+The task is the text the user gave with this skill: `/ship-pr add a tip field
+to the bill form`, `$ship-pr fix the rounding bug`, or the request in the
+message that triggered it. It can be a sentence, an issue number or URL, or a
+ticket pasted in. If it is an issue reference, read the issue first. If no task
+was given, ask for one in a single question before doing anything else.
 
 ## The gates
 
