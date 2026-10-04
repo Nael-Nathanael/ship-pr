@@ -5,6 +5,7 @@ Capture it from the final code, and attach it so it renders inside the PR.
 
 Contents: [What to capture](#what-to-capture) ·
 [Capturing in a browser](#capturing-in-a-browser) ·
+[Marking where to look](#marking-where-to-look) ·
 [Making a GIF](#making-a-gif) · [Attaching: GitHub](#attaching-github) ·
 [Attaching: GitLab](#attaching-gitlab) ·
 [Attaching: Bitbucket and others](#attaching-bitbucket-and-others) ·
@@ -14,14 +15,25 @@ Contents: [What to capture](#what-to-capture) ·
 
 | Change | Evidence |
 |--------|----------|
-| UI flow added or changed | A recording of the whole flow, plus a screenshot of each key state |
+| User flow added or changed | A recording of the whole flow, plus a screenshot of each key state |
 | Visual change | Before and after screenshots at the same viewport, side by side |
-| Bug fix with visible symptom | Recording or screenshot of the bug on the default branch, and of the fix |
+| Bug fix with visible symptom | Screenshot of the bug on the default branch, and of the fix |
 | Responsive or themed UI | Screenshots at the widths and themes the change affects |
 | API, CLI, job, library | Terminal output: the command and what it printed, as a fenced code block |
 | Performance | The measurement before and after, with the command that produced it |
 
 Every acceptance criterion in the plan should point at one piece of evidence.
+
+Record a video or GIF only when the change alters the user flow: the steps a
+user takes, their order, or the screens they pass through. A new wizard, a
+reordered checkout and a dialog that now opens where a page used to load all
+qualify. A restyle, a copy change, a new column and a fix to one state do not;
+screenshots show those better, and a recording there only costs the reader
+time. A bug that shows only in motion (a flicker, a wrong redirect) is the
+exception: record it.
+
+Every screenshot carries a red box around what changed, so the reader knows
+where to look. See [Marking where to look](#marking-where-to-look).
 
 Keep it honest and safe:
 - Capture after the last code change. If you change code afterwards, capture again.
@@ -51,17 +63,20 @@ const out = process.env.EVIDENCE_DIR;
 const browser = await chromium.launch();
 const context = await browser.newContext({
   viewport: { width: 1280, height: 800 },
+  // Only when the change alters the user flow.
   recordVideo: { dir: out, size: { width: 1280, height: 800 } },
 });
 const page = await context.newPage();
 
 await page.goto('http://localhost:3000/');
-await page.screenshot({ path: `${out}/01-start.png` });
+await shot(page, `${out}/01-start.png`, ['button[type=submit]']);
 // … drive the flow as a user would, screenshot each key state …
 
 await context.close(); // the video file is written on close
 await browser.close();
 ```
+
+`shot` is defined under [Marking where to look](#marking-where-to-look).
 
 Newer Playwright versions also have `page.screencast.start({ path })` and
 `page.screencast.stop()` for recording only part of a session. Check the
@@ -76,6 +91,57 @@ error overlay or the wrong page is worse than none.
 
 If no browser can run in your environment, say so in the PR and give the
 strongest substitute you have: end-to-end test output, HTTP responses.
+
+## Marking where to look
+
+A reader should find the change in a screenshot without hunting for it. Draw a
+red box around each element the change added, moved or fixed.
+
+- Box the smallest element that shows the change: the button, the row, the
+  error message. Not the card or page around it.
+- Three boxes at most per screenshot. More than that, take a second screenshot.
+- In a before and after pair, box the same spot in both.
+- Skip the box only when the whole frame is the change, such as a new page.
+- The line under the screenshot in the PR says what is inside the box.
+
+Draw the box in the page, then take the screenshot:
+
+```javascript
+// Screenshot with a red box around each selector in `targets`.
+async function shot(page, path, targets, options = {}) {
+  for (const target of targets) {
+    const locator = page.locator(target).first();
+    await locator.scrollIntoViewIfNeeded();
+    await locator.evaluate((el) => {
+      const b = el.getBoundingClientRect();
+      const mark = document.createElement('div');
+      mark.dataset.focusMark = '';
+      mark.style.cssText =
+        `position:absolute;left:${b.x + scrollX - 6}px;top:${b.y + scrollY - 6}px;` +
+        `width:${b.width + 12}px;height:${b.height + 12}px;box-sizing:border-box;` +
+        'border:3px solid #ff0033;border-radius:6px;pointer-events:none;z-index:2147483647';
+      document.documentElement.append(mark);
+    });
+  }
+  await page.screenshot({ path, ...options });
+  await page.evaluate(() =>
+    document.querySelectorAll('[data-focus-mark]').forEach((n) => n.remove()));
+}
+```
+
+Pass `{ fullPage: true }` as `options` for a full-page screenshot. The boxes
+are removed after the screenshot, so they do not linger in a recording. With
+the Playwright MCP tools, run the same marking code through the evaluate tool
+before taking the screenshot.
+
+For a screenshot that already exists, draw the box with ffmpeg, giving the
+position and size in pixels:
+
+```bash
+ffmpeg -y -i 01-start.png -vf "drawbox=x=600:y=300:w=240:h=80:color=red:t=4" -frames:v 1 -update 1 01-start-marked.png
+```
+
+Look at the result. A box around the wrong element misleads more than no box.
 
 ## Making a GIF
 
