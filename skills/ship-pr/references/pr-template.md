@@ -23,7 +23,9 @@ issue or ticket.
 ## Evidence
 ![Short description of the screenshot](path-or-url)
 
-Recording of the full flow:
+What the red box shows, in one line.
+
+Recording of the full flow (only when the user flow changed):
 
 path-or-url-on-its-own-line
 

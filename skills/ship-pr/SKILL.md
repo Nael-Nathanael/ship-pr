@@ -1,6 +1,6 @@
 ---
 name: ship-pr
-description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with screenshots and a GIF or video. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
+description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with marked-up screenshots, plus a GIF or video when the user flow changes. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
 argument-hint: <task>
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh:*)
 license: MIT
@@ -264,8 +264,9 @@ Record the result as a table; it goes into the PR.
 would. For anything with a UI, drive a real browser through the affected flow
 with Playwright (the Playwright MCP tools, or a script), including the setup
 steps a user would do, plus at least one failure path. Follow
-[references/evidence.md](references/evidence.md) to capture screenshots and a
-recording as you go. For a change with no UI, the evidence is terminal output:
+[references/evidence.md](references/evidence.md) to capture screenshots as you
+go, each with a red box around what changed, and a recording when the change
+alters the user flow. For a change with no UI, the evidence is terminal output:
 the command, and what it printed, before and after.
 
 If the walkthrough finds a bug, fix it, re-run the checks, and capture again.
@@ -289,7 +290,7 @@ where it is seen without scrolling past a wall of text.
 Attaching media from a terminal differs by forge and CLI version;
 [references/evidence.md](references/evidence.md) has the working method for
 each and the fallbacks. After the PR is open, fetch it and confirm the images
-and recording actually render. An upload that returned success but shows a
+and any recording actually render. An upload that returned success but shows a
 broken image is not evidence.
 
 Then re-read the PR as a stranger would, fix what is unclear, and check CI if
