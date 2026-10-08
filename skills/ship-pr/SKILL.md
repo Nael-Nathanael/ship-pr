@@ -258,7 +258,8 @@ line against `git diff "origin/$DEFAULT"...HEAD`:
 - Each changed file: accounted for by the plan. Unplanned changes are either
   justified in the plan or reverted.
 
-Record the result as a table; it goes into the PR.
+Record the result in `$WORK/plan.md`; a short summary goes into the PR's
+collapsed proof block.
 
 **3. Run it.** Start the application locally and use the change the way a user
 would. For anything with a UI, drive a real browser through the affected flow
@@ -280,12 +281,11 @@ output, and confirm `git status` shows only what you intend to ship.
 Push the branch and open the PR against the default branch. Write the
 description from [references/pr-template.md](references/pr-template.md), unless
 the repo has its own template, in which case fill that in and add the evidence
-and plan cross-check sections to it.
+and the collapsed proof block to it.
 
-The description is for everyone who will read it: a reviewer, a product owner,
-someone doing `git blame` in a year. Lead with what changed for the user and
-why, in plain language, before any implementation detail. Put the evidence
-where it is seen without scrolling past a wall of text.
+Keep it short and plain: a few sentences on what changed for the user and why,
+then the evidence. Test results and the plan cross-check go in a collapsed
+block at the end. No implementation walkthrough.
 
 Attaching media from a terminal differs by forge and CLI version;
 [references/evidence.md](references/evidence.md) has the working method for

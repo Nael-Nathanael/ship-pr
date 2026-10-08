@@ -1,7 +1,10 @@
 # PR description
 
-If the repo has a PR template, fill that in and add the Evidence, Testing and
-Plan cross-check sections from below. Otherwise use this.
+Short and plain. A reader should know what changed and see it working in under
+a minute. Proof that the work was checked goes in a collapsed block at the end.
+
+If the repo has a PR template, fill that in the same way and add the evidence and
+the collapsed proof block.
 
 ## Title
 
@@ -10,78 +13,62 @@ style. "Add CSV export to the orders table", not "Update OrdersTable.tsx".
 
 ## Body
 
-Write for someone who has not seen the ticket and does not know this part of
-the code. Plain words first, detail after. No filler, no describing your own
-process.
-
 ```markdown
-## What and why
-Two to four sentences. What a user or developer can do now that they could
-not before, or what was broken and now works. Why it was needed. Link the
-issue or ticket.
+<One to three sentences: what a user can do now, or what was broken and now
+works, and why. Link the issue.>
 
-## Evidence
-![Short description of the screenshot](path-or-url)
+![Short description](path-or-url)
 
-What the red box shows, in one line.
+<What the red box shows, in one line.>
 
-Recording of the full flow (only when the user flow changed):
+<Recording, only when the user flow changed:>
 
 path-or-url-on-its-own-line
 
-| Before | After |
-| --- | --- |
-| ![Before](path-or-url) | ![After](path-or-url) |
+**Try it:** 1. … 2. … 3. …
 
-For non-UI changes, the command and its output in a code block.
+**Note:** <only when there is one: a risk, a deploy step, a migration, a
+config change, something not verified.>
 
-## How it works
-The approach in a short paragraph or a few bullets: what was added or changed,
-what existing code it reuses, and any decision a reviewer might question, with
-the reason.
+<details>
+<summary>Tests and plan check</summary>
 
-## Testing
-| Level | What is covered | Result |
-| --- | --- | --- |
-| Unit | … | 12 passed |
-| Integration | … | 4 passed |
-| End-to-end | … | 2 passed |
-| Manual walkthrough | Flow walked in a browser, including <failure path> | See evidence |
+- Unit: 12 passed. Integration: 4 passed. End-to-end: 2 passed.
+- Typecheck, lint, build: clean.
+- Each acceptance criterion from the plan is met; proof for each: AC1
+  screenshot above, AC2 `orders.e2e.ts`.
+- Any level marked n/a, any deviation from the plan, and pre-existing
+  failures, each with one line of why.
 
-Checks run: `<typecheck>`, `<lint>`, `<build>`, `<test>`, with the summary
-line of each. For any level marked n/a, the reason.
-
-## Plan cross-check
-| Acceptance criterion | Status | Proof |
-| --- | --- | --- |
-| AC1: … | Met | Screenshot 2, `orders.e2e.ts` |
-
-Deviations from the plan, and why. Whether the plan was challenged by an
-independent reviewer, and the changes that came from it.
-
-## How to review
-Where to start reading, and steps to try it locally:
-1. …
-
-## Notes
-Anything not verified and why. Risks, migrations, config or environment
-changes needed on deploy. Follow-ups noticed but left out of this change.
-Pre-existing failures, with proof they exist on the default branch.
+</details>
 ```
 
-Leave out a section that has nothing to say, except Evidence, Testing and Plan
-cross-check, which always appear.
+For a change with no UI, the evidence is the command and its output in a code
+block, in place of the screenshot.
+
+## Rules
+
+- No headings above the evidence. The summary and the screenshot are the first
+  thing on the page.
+- Plain words. No file names, function names or class names in the summary;
+  say what it does, not where it lives.
+- Leave out how it was built unless a reviewer would question a decision. Then
+  one sentence in the Note, with the reason.
+- No describing your own process outside the collapsed block: no "I
+  explored", "the plan was challenged".
+- Everything outside the collapsed block fits on one screen.
+- Leave out Try it and Note when they have nothing to say. The evidence and the
+  collapsed block always appear.
 
 ## Before opening
 
-- A person outside the team could say what this PR does after reading the
-  first section.
-- Evidence appears in the first screenful or just below it.
-- Every claim ("tests pass", "works on mobile") has output or an image behind it.
+- Someone outside the team could say what this PR does from the first lines.
+- Every claim ("tests pass", "works on mobile") has output or an image behind
+  it.
 - No secrets, tokens, internal hostnames or personal data in text or images.
 - The diff contains only this change.
 
 ## Draft or ready
 
 Open as ready for review when every gate passed. Open as a draft when a gate
-is blocked, with what is missing at the top of the description.
+is blocked, with one line at the top saying what is missing.
