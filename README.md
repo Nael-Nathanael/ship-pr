@@ -20,8 +20,9 @@ Windsurf and Antigravity.
 | 5 | Build | Code plus unit, integration and end-to-end tests, worked from a task checklist |
 | 6 | Prove | Checks pass, result compared with the plan, app walked through in a browser |
 | 7 | Publish | Open PR with the evidence in the description |
+| 8 | Contest | Open-source projects only: a reviewer on the strongest available model attacks the open PR; the PR is revised |
 
-Until gate 7 passes, the agent reports progress, not "done". If a gate is
+Until the last gate passes, the agent reports progress, not "done". If a gate is
 blocked, it opens a draft PR and says what is missing.
 
 ## Install
@@ -81,6 +82,7 @@ skills/ship-pr/
     testing.md                 gate 5
     evidence.md                gates 6 and 7
     pr-template.md             gate 7
+    contest-brief.md           gate 8
   evals/evals.json             test prompts for improving the skill
 ```
 
