@@ -6,9 +6,11 @@ solid.
 
 ## Choosing the reviewer
 
-A subagent in a fresh context, running on Fable. In Claude Code, set
-`model: "fable"` on the subagent. If Fable is not available, use the strongest
-model you can reach, and name the model that reviewed in your final report.
+A reviewer in a fresh context, on the highest-tier model your harness can
+reach: a subagent with its model set explicitly, a different agent CLI, or a
+new session. Check what is available rather than assuming; a subagent left on
+its default may run a cheaper model. Name the model that reviewed in your
+final report.
 
 Self-review does not pass this gate. If no independent reviewer is possible,
 the gate is blocked: report it as in "When a gate cannot pass".

@@ -310,9 +310,10 @@ stranger's PR. Each problem they find costs a review round that may never
 come. Find those problems first: hand the open PR to a reviewer that has none
 of your context and whose job is to reject it.
 
-- The reviewer runs on Fable, in a fresh context. In Claude Code that is a
-  subagent with `model: "fable"`. If Fable is not available, use the strongest
-  model you can reach and say in your report which one reviewed.
+- The reviewer runs on the highest-tier model your harness can reach, in a
+  fresh context: a subagent with its model set explicitly, a second session,
+  or a different agent CLI. Do not let it default to a cheaper model. Say in
+  your report which model reviewed.
 - Give it the PR and read access to the code. Do not give it your reasoning,
   the plan or the gate 4 report.
 - It is read-only and stays local: no commits, no pushes, no comments or
