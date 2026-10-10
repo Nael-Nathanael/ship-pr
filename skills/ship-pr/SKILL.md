@@ -28,7 +28,8 @@ was given, ask for one in a single question before doing anything else.
 
 ## The gates
 
-Seven gates, in order. Each one produces something a person can inspect.
+Seven gates, in order, and an eighth when the PR goes to an open-source
+project. Each one produces something a person can inspect.
 
 | # | Gate | What exists afterwards |
 |---|------|------------------------|
@@ -39,9 +40,11 @@ Seven gates, in order. Each one produces something a person can inspect.
 | 5 | Build | Code and tests, driven from a visible task checklist |
 | 6 | Prove | Checks pass, plan cross-checked, app walked through, evidence captured |
 | 7 | Publish | An open PR whose description carries the evidence |
+| 8 | Contest | Open-source projects only: an independent review of the open PR, and the PR revised |
 
-Do not describe the work as done, finished, complete or ready until gate 7 has
-passed and you have re-read the PR as a reviewer would. Before that, report
+Do not describe the work as done, finished, complete or ready until the last
+gate that applies (7, or 8 for an open-source project) has passed and you have
+re-read the PR as a reviewer would. Before that, report
 status honestly: "Gate 5 of 7: implementation finished, tests not yet run."
 The word "done" tells the user they can stop paying attention, so using it
 early costs them a broken handoff.
@@ -72,7 +75,7 @@ own. It needs git 2.31 or later.
 
 ### Scale depth, never skip gates
 
-A one-line fix and a new feature go through the same seven gates; what changes
+A one-line fix and a new feature go through the same gates; what changes
 is how much each gate takes. For a small change, exploration may be one search,
 the plan ten lines, the challenge a short review, the evidence one test run.
 What does not shrink: the branch, the tests that prove it, and the PR.
@@ -140,7 +143,7 @@ Two setups need a different start:
 
 One branch carries one reviewable change. If the request is several unrelated
 changes, or too large to review in one sitting, split it into slices that each
-deliver one complete user flow, and take each slice through all seven gates.
+deliver one complete user flow, and take each slice through every gate.
 
 ## Gate 2: Explore
 
@@ -296,12 +299,42 @@ broken image is not evidence.
 Then re-read the PR as a stranger would, fix what is unclear, and check CI if
 the repo has it. Do not merge; merging is the reviewer's decision.
 
+## Gate 8: Contest
+
+This gate applies when the PR's base repository is public
+(`gh repo view <base> --json visibility`). Otherwise skip it; nothing needs
+saying in the PR.
+
+A maintainer of an open-source project owes you nothing and has minutes for a
+stranger's PR. Each problem they find costs a review round that may never
+come. Find those problems first: hand the open PR to a reviewer that has none
+of your context and whose job is to reject it.
+
+- The reviewer runs on Fable, in a fresh context. In Claude Code that is a
+  subagent with `model: "fable"`. If Fable is not available, use the strongest
+  model you can reach and say in your report which one reviewed.
+- Give it the PR and read access to the code. Do not give it your reasoning,
+  the plan or the gate 4 report.
+- It is read-only and stays local: no commits, no pushes, no comments or
+  reviews posted on the forge.
+- Use the brief in [references/contest-brief.md](references/contest-brief.md).
+- Save its report to `$WORK/contest.md`.
+
+Then go through every finding and either fix it or write one line saying why
+not. Fixes are new commits on the same branch, re-proved as in gate 6; do not
+rewrite pushed history. Update the PR description where a fix changes what it
+says, and re-read the PR once more. A finding that turns on something only the
+user can decide goes to the user before you act on it.
+
+Run one round, and a second only when the fixes changed the design.
+
 ## Reporting
 
 Only now say the work is done. The final message gives, in this order: the PR
 link, one or two sentences on what now works, how it was verified, and
 anything the reviewer should know (skipped gates with reasons, follow-ups,
-pre-existing failures).
+pre-existing failures). After gate 8, add what the contest found: what was
+fixed, and what was rejected and why.
 
 ### When a gate cannot pass
 
@@ -328,4 +361,5 @@ fixed by the user in minutes; a hidden one is found in production.
 - [references/testing.md](references/testing.md): choosing and writing tests per level. Read at gate 5.
 - [references/evidence.md](references/evidence.md): capturing and attaching screenshots and recordings. Read at gates 6 and 7.
 - [references/pr-template.md](references/pr-template.md): the PR description. Read at gate 7.
+- [references/contest-brief.md](references/contest-brief.md): the PR reviewer's prompt. Read at gate 8.
 - [references/origin.md](references/origin.md): the original statement of this workflow.
