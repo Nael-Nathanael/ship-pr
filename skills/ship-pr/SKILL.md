@@ -1,7 +1,6 @@
 ---
 name: ship-pr
 description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with marked-up screenshots, plus a GIF or video when the user flow changes. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
-argument-hint: <task>
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh:*)
 license: MIT
 compatibility: Needs git, shell access and a forge CLI (gh, glab or equivalent). Browser automation (Playwright) and ffmpeg are used for UI evidence when available.
@@ -29,7 +28,7 @@ was given, ask for one in a single question before doing anything else.
 ## The gates
 
 Seven gates, in order, and an eighth when the PR goes to an open-source
-project. Each one produces something a person can inspect.
+project you do not maintain. Each one produces something a person can inspect.
 
 | # | Gate | What exists afterwards |
 |---|------|------------------------|
@@ -40,10 +39,10 @@ project. Each one produces something a person can inspect.
 | 5 | Build | Code and tests, driven from a visible task checklist |
 | 6 | Prove | Checks pass, plan cross-checked, app walked through, evidence captured |
 | 7 | Publish | An open PR whose description carries the evidence |
-| 8 | Contest | Open-source projects only: an independent review of the open PR, and the PR revised |
+| 8 | Contest | Open-source projects you do not maintain: an independent review of the open PR, and the PR revised |
 
 Do not describe the work as done, finished, complete or ready until the last
-gate that applies (7, or 8 for an open-source project) has passed and you have
+gate that applies (7, or 8 when gate 8 applies) has passed and you have
 re-read the PR as a reviewer would. Before that, report
 status honestly: "Gate 5 of 7: implementation finished, tests not yet run."
 The word "done" tells the user they can stop paying attention, so using it
@@ -56,8 +55,10 @@ report the work as not done. See [When a gate cannot pass](#when-a-gate-cannot-p
 
 ### The repository's own rules win
 
-Before starting, read what the repo says about contributing: `AGENTS.md`,
-`CLAUDE.md`, `CONTRIBUTING.md`, the PR template, branch naming, commit style.
+Before starting, read what the repo says about contributing: agent
+instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`,
+`.github/copilot-instructions.md`, `.cursor/rules/`), `CONTRIBUTING.md`, the
+PR template, branch naming, commit style.
 Where those conflict with this skill, follow the repo. This skill supplies the
 order of work and the bar for proof; the repo supplies its conventions.
 
@@ -88,7 +89,7 @@ your harness has its own plan file or plan mode, use that for the plan instead.
 The dependency check runs before anything else. In Claude Code it already ran
 when this skill loaded, and its result is here:
 
-!`bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh`
+!`bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh || true`
 
 If the line above still shows the command rather than its output, your agent
 did not run it: run it yourself from the repository root, with the path
@@ -102,9 +103,9 @@ Run it again with `--ui` once the plan shows the change touches a UI, since
 that makes the browser-evidence tools required.
 
 It prints `ok`, `warn` or `MISSING` per tool, each with the fix command, and
-exits 1 when something required is missing.
+ends with `preflight: FAILED` (exit 1) when something required is missing.
 
-- On exit 1, stop and show the user the `MISSING` lines with their fix
+- On `FAILED`, stop and show the user the `MISSING` lines with their fix
   commands. Ask before running any of them: installing software changes their
   machine. Run the check again after they are fixed.
 - Project-level installs the repo already expects, such as
@@ -301,9 +302,10 @@ the repo has it. Do not merge; merging is the reviewer's decision.
 
 ## Gate 8: Contest
 
-This gate applies when the PR's base repository is public
-(`gh repo view <base> --json visibility`). Otherwise skip it; nothing needs
-saying in the PR.
+This gate applies when the PR's base repository is public and the user is not
+one of its maintainers: `gh repo view <base> --json visibility,viewerPermission`
+shows `PUBLIC` and a permission of `READ`, `TRIAGE` or none. Otherwise skip it;
+nothing needs saying in the PR.
 
 A maintainer of an open-source project owes you nothing and has minutes for a
 stranger's PR. Each problem they find costs a review round that may never
@@ -363,4 +365,3 @@ fixed by the user in minutes; a hidden one is found in production.
 - [references/evidence.md](references/evidence.md): capturing and attaching screenshots and recordings. Read at gates 6 and 7.
 - [references/pr-template.md](references/pr-template.md): the PR description. Read at gate 7.
 - [references/contest-brief.md](references/contest-brief.md): the PR reviewer's prompt. Read at gate 8.
-- [references/origin.md](references/origin.md): the original statement of this workflow.

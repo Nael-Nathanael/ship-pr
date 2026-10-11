@@ -30,13 +30,15 @@ else
   miss "git" "$pm git"
 fi
 
+ui_check() { if [ "$ui" = 1 ]; then miss "$@"; else warn "$@"; fi; }
+
 remote="$(git remote get-url origin 2>/dev/null || true)"
 case "$remote" in
   *github*)
     if command -v gh >/dev/null; then
       v="$(gh --version | head -1 | awk '{print $3}')"
       if version_ge "$v" 2.99.0; then ok "gh $v"
-      else miss "gh $v (need 2.99.0+ to attach screenshots and video)" "https://github.com/cli/cli#installation"; fi
+      else ui_check "gh $v (need 2.99.0+ to attach screenshots and video)" "https://github.com/cli/cli#installation"; fi
       if gh auth status >/dev/null 2>&1; then ok "gh logged in"; else miss "gh not logged in" "gh auth login"; fi
     else
       miss "gh" "https://github.com/cli/cli#installation"
@@ -48,8 +50,6 @@ case "$remote" in
   *)
     warn "forge for $remote not recognised: open the PR by hand or with its CLI" "see references/evidence.md" ;;
 esac
-
-ui_check() { if [ "$ui" = 1 ]; then miss "$@"; else warn "$@"; fi; }
 
 if command -v node >/dev/null; then ok "node $(node --version)"; else ui_check "node (for Playwright)" "https://nodejs.org or $pm nodejs"; fi
 

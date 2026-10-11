@@ -20,7 +20,7 @@ Windsurf and Antigravity.
 | 5 | Build | Code plus unit, integration and end-to-end tests, worked from a task checklist |
 | 6 | Prove | Checks pass, result compared with the plan, app walked through in a browser |
 | 7 | Publish | Open PR with the evidence in the description |
-| 8 | Contest | Open-source projects only: a reviewer on the strongest available model attacks the open PR; the PR is revised |
+| 8 | Contest | Open-source projects you do not maintain: a reviewer on the strongest available model attacks the open PR; the PR is revised |
 
 Until the last gate passes, the agent reports progress, not "done". If a gate is
 blocked, it opens a draft PR and says what is missing.
@@ -34,8 +34,9 @@ npx skills add Nael-Nathanael/ship-pr          # this project
 npx skills add Nael-Nathanael/ship-pr -g       # all your projects
 ```
 
-Or copy `skills/ship-pr/` into your agent's skills directory:
-`.agents/skills/` for most agents, `.claude/skills/` for Claude Code.
+Or copy `skills/ship-pr/` into your agent's skills directory. Each agent has
+its own; the skills CLI lists them under
+[supported agents](https://github.com/vercel-labs/skills#supported-agents).
 
 ## Use
 
@@ -45,9 +46,9 @@ Or copy `skills/ship-pr/` into your agent's skills directory:
 ```
 
 That is `/ship-pr <task>` in Claude Code, Cursor and Antigravity, and
-`$ship-pr <task>` in Codex. The task can be a sentence, an issue number or URL,
-or a pasted ticket. Agents also pick the skill up on their own for build, fix
-and refactor requests.
+`$ship-pr <task>` in Codex. In any agent you can also just describe the task:
+agents pick the skill up on their own for build, fix and refactor requests.
+The task can be a sentence, an issue number or URL, or a pasted ticket.
 
 ## What the agent needs
 
@@ -57,15 +58,16 @@ before installing anything. To check your machine yourself, run this from any
 repo:
 
 ```bash
-bash ~/.agents/skills/ship-pr/scripts/preflight.sh --ui
+bash <skills-dir>/ship-pr/scripts/preflight.sh --ui
 ```
 
-The path depends on where your agent keeps skills; `.claude/skills/` for Claude Code.
+`<skills-dir>` is where your agent keeps skills, for example `~/.claude/skills`
+for Claude Code or `~/.agents/skills` for Codex.
 
 - git, and a forge CLI that is logged in: `gh` for GitHub, `glab` or an API
   token for GitLab.
 - `gh` 2.99.0 or later to attach screenshots and video to a GitHub PR. Older
-  versions fall back to a workaround described in
+  versions only warn, and fall back to a workaround described in
   [`references/evidence.md`](skills/ship-pr/references/evidence.md).
 - Playwright and ffmpeg for UI evidence. Without them the agent says so in the PR.
 
@@ -75,7 +77,6 @@ The path depends on where your agent keeps skills; `.claude/skills/` for Claude 
 skills/ship-pr/
   SKILL.md                     the workflow
   references/
-    origin.md                  the original one-paragraph brief
     plan-template.md           gate 3
     design-principles.md       gate 3
     challenge-brief.md         gate 4
@@ -83,7 +84,7 @@ skills/ship-pr/
     evidence.md                gates 6 and 7
     pr-template.md             gate 7
     contest-brief.md           gate 8
-  evals/evals.json             test prompts for improving the skill
+  scripts/preflight.sh         gate 0 dependency check
 ```
 
 The repository's own `AGENTS.md`, `CONTRIBUTING.md` and PR template take

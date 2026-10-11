@@ -44,10 +44,11 @@ For every level marked not applicable, the PR states the reason.
 - Cover authorisation: the wrong user gets refused.
 
 **End-to-end**
-- Drive the interface a user drives, including the setup. Create the data by
-  clicking through the screens that create it, not by seeding it through an
-  API or a script. A seeded fixture proves the path you already believed in;
-  clicking through setup finds the broken one.
+- Drive the interface a user drives for the flow the change touches. If that
+  flow includes creating the data, create it through the screens, because a
+  seeded fixture proves only the path you already believed in.
+- Set up everything else the way the repo's existing end-to-end tests do,
+  whether that is clicking through, an API call or a saved login.
 - Select elements the way a user finds them: role, label, visible text.
 - Assert on what the user sees.
 - Include at least one failure path: invalid input, a denied action.
