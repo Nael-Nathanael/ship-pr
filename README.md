@@ -14,7 +14,7 @@ Windsurf and Antigravity.
 | # | Gate | Result |
 |---|------|--------|
 | 1 | Branch | Work branch cut from the up-to-date default branch |
-| 2 | Explore | What exists already and what can be reused |
+| 2 | Explore | Open PRs or issues already doing the work, and code that can be reused |
 | 3 | Plan | Plan file with checkable acceptance criteria |
 | 4 | Challenge | An independent reviewer attacks the plan; the plan is revised |
 | 5 | Build | Code plus unit, integration and end-to-end tests, worked from a task checklist |
@@ -24,6 +24,25 @@ Windsurf and Antigravity.
 
 Until the last gate passes, the agent reports progress, not "done". If a gate is
 blocked, it opens a draft PR and says what is missing.
+
+## Why these gates
+
+Each gate targets a measured way that agent work fails or a PR stalls.
+
+| Gate | Finding | Source |
+|------|---------|--------|
+| 2 Explore | Duplicates are 23% of rejected agent PRs, second only to PRs nobody reviews | [Ehsani et al., MSR 2026](https://arxiv.org/abs/2601.15195) |
+| 3 Plan | Writing a plan before the code raises Pass@1 by up to 25.4% over generating the code directly | [Jiang et al., TOSEM](https://arxiv.org/abs/2303.06689) |
+| 4, 8 Challenge, Contest | Models reviewing their own reasoning often make it worse; on code, outside feedback fixes 52.6% of failing programs against 33.3% with the model's own | [Huang et al., ICLR 2024](https://arxiv.org/abs/2310.01798); [Olausson et al., ICLR 2024](https://arxiv.org/abs/2306.09896) |
+| 5, 6 Build, Prove | Choosing a patch by running reproduction tests solves 32% of SWE-bench Lite against 25.7% without tests | [Xia et al., FSE 2025](https://arxiv.org/abs/2407.01489) |
+| 6 Prove | Each failed CI check lowers an agent PR's merge odds by about 15% | [Ehsani et al., MSR 2026](https://arxiv.org/abs/2601.15195) |
+| 7 Publish | Small changes get reviewed in under an hour at Google, very large ones in about five | [Sadowski et al., ICSE-SEIP 2018](https://sback.it/publications/icse2018seip.pdf) |
+| 7 Publish | PR descriptions that say what feedback is wanted are 64–72% more likely to be merged | [Pirouzkhah et al., MSR 2026](https://arxiv.org/abs/2602.14611) |
+
+Agent PRs that include tests are not merged more often
+([Haque et al., MSR 2026](https://arxiv.org/abs/2601.03556)), so the tests are
+there for correctness. No study yet measures screenshots in PRs; the evidence
+gate rests on reviewers being able to check a claim without running the code.
 
 ## Install
 
