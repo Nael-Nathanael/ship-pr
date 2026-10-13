@@ -1,5 +1,7 @@
 # ship-pr
 
+[![skills.sh](https://skills.sh/b/Nael-Nathanael/ship-pr)](https://skills.sh/Nael-Nathanael/ship-pr)
+
 An agent skill for delivering code changes. The agent counts a task as done
 only when there is an open pull request that a reviewer can understand without
 asking questions, with screenshots, a recording or terminal output showing the
