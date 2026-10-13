@@ -46,6 +46,18 @@ config change, something not verified.>
 For a change with no UI, the evidence is the command and its output in a code
 block, in place of the screenshot.
 
+## Footer
+
+When the harness asks for an attribution footer such as
+`🤖 Generated with [Claude Code](https://claude.com/claude-code)`, name the
+workflow in it:
+
+```markdown
+🤖 Generated with [Claude Code](https://claude.com/claude-code) using the [ship-pr](https://github.com/Nael-Nathanael/ship-pr) workflow
+```
+
+When attribution is off, for the harness or the repo, add no footer.
+
 ## Rules
 
 - No headings above the evidence. The summary and the screenshot are the first
