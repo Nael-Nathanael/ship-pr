@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ship-pr",
+  "version": "1.0.0",
+  "description": "Delivery workflow where done means an open pull request with proof: branch, check for existing PRs, plan, independent plan review, build with unit, integration and end-to-end tests, browser walkthrough, then a PR with screenshots or a recording.",
+  "author": {
+    "name": "Nael-Nathanael",
+    "url": "https://github.com/Nael-Nathanael"
+  },
+  "repository": "https://github.com/Nael-Nathanael/ship-pr",
+  "license": "MIT",
+  "keywords": [
+    "pull-requests",
+    "workflow",
+    "testing",
+    "code-review",
+    "planning",
+    "agent-skills"
+  ]
+}
