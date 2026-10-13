@@ -151,6 +151,13 @@ deliver one complete user flow, and take each slice through every gate.
 Read before you design. The most common waste is writing something the
 codebase already has. Find out:
 
+- Whether someone is already doing this work. Search open and recently
+  closed PRs and issues for the feature, the bug and the files involved
+  (`gh pr list --state all --search "<terms>"`, `gh issue list --search
+  "<terms>"`, or the forge's equivalent). After PRs nobody reviews,
+  duplicates are the most common reason agent PRs go unmerged: 23% of
+  rejections in a study of 33,596 agent PRs ([Ehsani et al., MSR 2026](https://arxiv.org/abs/2601.15195)).
+  If you find one, stop and tell the user before planning.
 - How the affected area works today, traced from entry point to effect.
 - What already exists that you can call or extend: helpers, components,
   hooks, services, types, fixtures, test utilities.
