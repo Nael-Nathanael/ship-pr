@@ -6,9 +6,8 @@ solid.
 
 ## Choosing the reviewer
 
-A reviewer in a fresh context, on the highest-tier model your harness can
-reach: a subagent with its model set explicitly, a different agent CLI, or a
-new session. Check what is available rather than assuming; a subagent left on
+A reviewer in a fresh context, on the same model as you: a subagent with its
+model set explicitly, a different agent CLI, or a new session. Check what is available rather than assuming; a subagent left on
 its default may run a cheaper model. Name the model that reviewed in your
 final report.
 
