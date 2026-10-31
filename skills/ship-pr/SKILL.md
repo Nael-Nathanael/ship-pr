@@ -22,8 +22,28 @@ see it, review it or merge it. Work that stops there gets lost or redone.
 The task is the text the user gave with this skill: `/ship-pr add a tip field
 to the bill form`, `$ship-pr fix the rounding bug`, or the request in the
 message that triggered it. It can be a sentence, an issue number or URL, or a
-ticket pasted in. If it is an issue reference, read the issue first. If no task
-was given, ask for one in a single question before doing anything else.
+ticket pasted in. If it is an issue reference, read the issue first, then
+claim it before gate 1. If no task was given, ask for one in a single question
+before doing anything else.
+
+### Claim the issue first
+
+When the task comes from an issue, claim it before any other work, so nobody
+else starts the same thing:
+
+1. **Already taken?** If the issue has an assignee other than you, or a recent
+   comment from someone saying they are on it, stop and ask the user.
+2. **The repo's way.** If the repo documents a claim command (a `/claim`
+   comment, a bot, a label), use it. Check `CONTRIBUTING.md`, the issue
+   templates and `.github/workflows/` for it.
+3. **Otherwise assign yourself:** `gh issue edit <n> --add-assignee @me`
+   (or the forge's equivalent).
+4. **No permission to assign** (a project you do not maintain): comment on the
+   issue that you are working on it, and follow any rule the project has
+   about asking first.
+
+Confirm the claim took: re-read the issue's assignees or the bot's reply.
+Link the issue in the PR so the claim closes with it.
 
 ## The gates
 

@@ -70,6 +70,7 @@ That is `/ship-pr <task>` in Claude Code, Cursor and Antigravity, and
 `$ship-pr <task>` in Codex. In any agent you can also just describe the task:
 agents pick the skill up on their own for build, fix and refactor requests.
 The task can be a sentence, an issue number or URL, or a pasted ticket.
+An issue gets claimed (assigned, or the repo's `/claim`) before work starts.
 
 ## What the agent needs
 
