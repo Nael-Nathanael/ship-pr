@@ -14,9 +14,6 @@ A change is done when a reviewer can open one pull request, understand it
 without asking you anything, and see proof that it works. Everything before
 that is progress. This skill is the path from request to that PR.
 
-Passing tests on a local branch is not the finish line, because nobody else can
-see it, review it or merge it. Work that stops there gets lost or redone.
-
 ## The task
 
 The task is the text the user gave with this skill: `/ship-pr add a tip field
@@ -70,8 +67,7 @@ early costs them a broken handoff.
 
 A gate that truly does not apply (no UI, so no browser walkthrough) is passed
 by saying so in the PR with the reason. A gate that applies but could not be
-completed is a blocker: open the PR as a draft, state what is missing, and
-report the work as not done. See [When a gate cannot pass](#when-a-gate-cannot-pass).
+completed is a blocker: see [When a gate cannot pass](#when-a-gate-cannot-pass).
 
 ### The repository's own rules win
 
@@ -112,16 +108,10 @@ when this skill loaded, and its result is here:
 
 !`bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh || true`
 
-If the line above still shows the command rather than its output, your agent
-did not run it: run it yourself from the repository root, with the path
-resolved to this skill's folder:
-
-```bash
-bash <skill-dir>/scripts/preflight.sh
-```
-
-Run it again with `--ui` once the plan shows the change touches a UI, since
-that makes the browser-evidence tools required.
+If the line above still shows the command rather than its output, run
+`bash <skill-dir>/scripts/preflight.sh` yourself from the repository root, and
+again with `--ui` once the plan shows a UI change (it makes the
+browser-evidence tools required).
 
 It prints `ok`, `warn` or `MISSING` per tool, each with the fix command, and
 ends with `preflight: FAILED` (exit 1) when something required is missing.
@@ -134,9 +124,6 @@ ends with `preflight: FAILED` (exit 1) when something required is missing.
   dependency, you may run without asking.
 - `warn` lines do not block, but each one becomes a gap you must name in the
   PR if it stops a gate from passing.
-
-The check takes seconds, and a missing `gh` found here costs a minute. Found
-at gate 7, after an hour of work, it costs the evidence.
 
 ## Gate 1: Branch
 
@@ -184,8 +171,7 @@ codebase already has. Find out:
   closed PRs and issues for the feature, the bug and the files involved
   (`gh pr list --state all --search "<terms>"`, `gh issue list --search
   "<terms>"`, or the forge's equivalent). After PRs nobody reviews,
-  duplicates are the most common reason agent PRs go unmerged: 23% of
-  rejections in a study of 33,596 agent PRs ([Ehsani et al., MSR 2026](https://arxiv.org/abs/2601.15195)).
+  duplicates are the most common reason agent PRs go unmerged.
   If you find one, stop and tell the user before planning.
 - How the affected area works today, traced from entry point to effect.
 - What already exists that you can call or extend: helpers, components,
@@ -210,18 +196,9 @@ The plan is what you will be checked against at gate 6, so its acceptance
 criteria must be observable: a command and its expected output, or a behaviour
 someone can watch happen.
 
-Design to these principles. Full reasoning and examples are in
+Design to YAGNI, reuse first, DRY, high cohesion with low coupling, and the
+right tool for the job, as set out in
 [references/design-principles.md](references/design-principles.md).
-
-- **YAGNI.** Build what the request needs. No options, layers or extension
-  points for requirements nobody has stated.
-- **Reuse first.** Prefer, in order: what the codebase has, the standard
-  library, the platform, an installed dependency, a new dependency, new code.
-- **DRY.** One piece of knowledge lives in one place.
-- **High cohesion, low coupling.** Each module does one thing; modules know
-  as little about each other as they can.
-- **Right tool for the job.** Use what the stack already provides for the
-  problem before building around it.
 
 Ask the user only what exploration could not answer: choices that depend on
 their priorities, or changes to existing behaviour others rely on.
@@ -229,24 +206,15 @@ their priorities, or changes to existing behaviour others rely on.
 ## Gate 4: Challenge
 
 A plan reviewed only by its author keeps the author's blind spots. Hand it to
-a reviewer that has none of your context and whose job is to find what is
-wrong with it.
-
-- The reviewer runs on the same model as you or a stronger one, in a fresh
-  context: a subagent, a second session, or a different agent CLI.
-- Give it the plan file and read access to the repo. Do not give it your
-  reasoning or tell it what you expect; a reviewer handed a conclusion tends
-  to return it confirmed.
-- Use the brief in [references/challenge-brief.md](references/challenge-brief.md).
-- Save its report to `$WORK/challenge.md`.
+a reviewer with none of your context, whose job is to find what is wrong with
+it. [references/challenge-brief.md](references/challenge-brief.md) has who may
+review, the prompt, and how to handle the report. Give the reviewer no
+conclusion of yours; one handed a conclusion tends to return it confirmed.
+Save its report to `$WORK/challenge.md`.
 
 Then go through every objection and either change the plan or write one line
 saying why not. Add the outcome to the plan under "Challenge outcome". Accepting
 everything without thought is as weak as dismissing everything.
-
-If no independent reviewer is possible in your environment, write the
-adversarial review yourself against the same brief, and say in the PR that the
-challenge was not independent. Do not present a self-review as an independent one.
 
 ## Gate 5: Build
 
@@ -267,16 +235,9 @@ While building:
 
 ### Tests
 
-Write tests at every level the change reaches. Which levels apply, and how to
-write each, is in [references/testing.md](references/testing.md). In short:
-
-| Level | Write it when the change… |
-|-------|---------------------------|
-| Unit | adds or alters logic with branches, calculations, parsing or edge cases |
-| Integration | crosses a boundary: database, HTTP handler, queue, another module or service |
-| End-to-end | alters something a user does through the interface |
-
-Use the repo's existing test framework and helpers. A bug fix gets a test that
+Write tests at every level the change reaches (unit, integration, end-to-end).
+Which levels apply, and how to write each, is in
+[references/testing.md](references/testing.md). Use the repo's existing test framework and helpers. A bug fix gets a test that
 fails before the fix and passes after it. If a level does not apply, the PR
 says which and why; "not applicable" is a claim a reviewer can check, silence
 is not.
@@ -348,28 +309,21 @@ stranger's PR. Each problem they find costs a review round that may never
 come. Find those problems first: hand the open PR to a reviewer that has none
 of your context and whose job is to reject it.
 
-- The reviewer runs on the same model as you, in a fresh context: a subagent
-  with its model set explicitly, a second session, or a different agent CLI.
-  Do not let it default to a cheaper model. Say in your report which model
-  reviewed.
-- Give it the PR and read access to the code. Do not give it your reasoning,
-  the plan or the gate 4 report.
-- It is read-only and stays local: no commits, no pushes, no comments or
-  reviews posted on the forge.
-- Use the brief in [references/contest-brief.md](references/contest-brief.md).
-- Save its report to `$WORK/contest.md`.
+[references/contest-brief.md](references/contest-brief.md) has who may review
+(same model as you, never a cheaper default; name it in your report), the
+read-only prompt, and how to handle the report. Do not give the reviewer your
+reasoning, the plan or the gate 4 report. Save its report to `$WORK/contest.md`.
 
 Then go through every finding and either fix it or write one line saying why
 not. Fixes are new commits on the same branch, re-proved as in gate 6; do not
-rewrite pushed history. Update the PR description where a fix changes what it
-says, and re-read the PR once more. A finding that turns on something only the
-user can decide goes to the user before you act on it.
+rewrite pushed history. Re-read the PR once more. A finding that turns on
+something only the user can decide goes to the user before you act on it.
 
 Run one round, and a second only when the fixes changed the design.
 
 ## Reporting
 
-Only now say the work is done. The final message gives, in this order: the PR
+The final message gives, in this order: the PR
 link, one or two sentences on what now works, how it was verified, and
 anything the reviewer should know (skipped gates with reasons, follow-ups,
 pre-existing failures). After gate 8, add what the contest found: what was
@@ -391,13 +345,3 @@ locally, a required secret is missing, a test environment is down.
 Never fake a gate: no invented output, no screenshots of something other than
 the final code, no "tests pass" without a run. A clearly reported gap can be
 fixed by the user in minutes; a hidden one is found in production.
-
-## Reference files
-
-- [references/plan-template.md](references/plan-template.md): the plan file. Read at gate 3.
-- [references/design-principles.md](references/design-principles.md): what each principle means in practice and when it is misapplied. Read at gate 3.
-- [references/challenge-brief.md](references/challenge-brief.md): the reviewer's prompt. Read at gate 4.
-- [references/testing.md](references/testing.md): choosing and writing tests per level. Read at gate 5.
-- [references/evidence.md](references/evidence.md): capturing and attaching screenshots and recordings. Read at gates 6 and 7.
-- [references/pr-template.md](references/pr-template.md): the PR description. Read at gate 7.
-- [references/contest-brief.md](references/contest-brief.md): the PR reviewer's prompt. Read at gate 8.
