@@ -80,7 +80,8 @@ instruction files (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`,
 `.github/copilot-instructions.md`, `.cursor/rules/`), `CONTRIBUTING.md`, the
 PR template, branch naming, commit style.
 Where those conflict with this skill, follow the repo. This skill supplies the
-order of work and the bar for proof; the repo supplies its conventions.
+order of work and the bar for proof; the repo supplies its conventions. The
+user's own global instructions win over this skill the same way.
 
 ### Keep working files out of the diff
 
@@ -150,7 +151,15 @@ Name the branch the way the repo already names them (look at
 `git branch -r`); otherwise `feat/…`, `fix/…`, `chore/…`.
 
 Check the working tree before switching. If there are uncommitted changes you
-did not make, stop and ask; they belong to someone. Never commit to the
+did not make, stop and ask; they belong to someone. If the checkout is shared,
+live (a tool runs from it) or used by another session, work in a worktree on
+disk instead of switching it, and remove the worktree once the branch merges:
+
+```bash
+git worktree add <disk-path>/<repo>/<branch> -b <type>/<short-topic> "origin/$DEFAULT"
+```
+
+Never commit to the
 default branch, because the PR is the review step and a direct commit skips it.
 
 Two setups need a different start:
