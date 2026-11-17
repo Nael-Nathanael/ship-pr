@@ -240,7 +240,6 @@ work as not done until they are in the PR.
 After the PR exists, check that the evidence is really there.
 
 ```bash
-gh pr view <n> --json body --jq .body          # every local path was rewritten to a URL
 gh api "repos/<owner>/<repo>/pulls/<n>" -H "Accept: application/vnd.github.full+json" --jq .body_html
 ```
 

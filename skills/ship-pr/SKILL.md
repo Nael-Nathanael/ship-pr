@@ -1,11 +1,11 @@
 ---
 name: ship-pr
-description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge that plan, implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with marked-up screenshots, plus a GIF or video when the user flow changes. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
+description: End-to-end delivery workflow for any code change, where the definition of done is an open pull request with proof attached. Covers branching off the default branch, exploring the codebase, writing a plan, having an independent reviewer challenge the plan (or, for a small change, the finished PR), implementing against a checklist with unit, integration and end-to-end tests, cross-checking the result against the plan, walking through the running app in a browser, and opening a PR with marked-up screenshots, plus a GIF or video when the user flow changes. Use this skill whenever the user asks to build, implement, add, fix, refactor or change something in a git repository and expects finished work, even when they never mention a PR, tests or a plan, and whenever they say "ship it", "open a PR", "make a PR" or "finish this ticket". Skip it only for questions, explanations, code review of someone else's work, and throwaway experiments the user says not to commit.
 allowed-tools: Bash(bash ${CLAUDE_SKILL_DIR}/scripts/preflight.sh:*)
 license: MIT
 compatibility: Needs git, shell access and a forge CLI (gh, glab or equivalent). Browser automation (Playwright) and ffmpeg are used for UI evidence when available.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # ship-pr
@@ -44,24 +44,25 @@ Link the issue in the PR so the claim closes with it.
 
 ## The gates
 
-Seven gates, in order, and an eighth when the PR goes to an open-source
-project you do not maintain. Each one produces something a person can inspect.
+Eight gates, in order. Gates 4 and 8 depend on the lane, chosen after gate 2
+(see [Pick the lane](#pick-the-lane-after-gate-2)). Each one produces
+something a person can inspect.
 
 | # | Gate | What exists afterwards |
 |---|------|------------------------|
 | 1 | Branch | A work branch cut from the up-to-date default branch |
 | 2 | Explore | Notes on what already exists and what can be reused |
 | 3 | Plan | A written plan file with acceptance criteria |
-| 4 | Challenge | An independent review of the plan, and the plan revised |
+| 4 | Challenge | Full lane: an independent review of the plan, and the plan revised |
 | 5 | Build | Code and tests, driven from a visible task checklist |
 | 6 | Prove | Checks pass, plan cross-checked, app walked through, evidence captured |
 | 7 | Publish | An open PR whose description carries the evidence |
-| 8 | Contest | Open-source projects you do not maintain: an independent review of the open PR, and the PR revised |
+| 8 | Contest | Light lane, and open-source projects you do not maintain: an independent review of the open PR, and the PR revised |
 
 Do not describe the work as done, finished, complete or ready until the last
 gate that applies (7, or 8 when gate 8 applies) has passed and you have
 re-read the PR as a reviewer would. Before that, report
-status honestly: "Gate 5 of 7: implementation finished, tests not yet run."
+status honestly: "Gate 5: implementation finished, tests not yet run."
 The word "done" tells the user they can stop paying attention, so using it
 early costs them a broken handoff.
 
@@ -91,12 +92,48 @@ WORK="$(git rev-parse --path-format=absolute --git-path ship-pr)"; mkdir -p "$WO
 This lives inside `.git`, so it is never committed, and each worktree gets its
 own. It needs git 2.31 or later.
 
-### Scale depth, never skip gates
+### Pick the lane after gate 2
 
-A one-line fix and a new feature go through the same gates; what changes
-is how much each gate takes. For a small change, exploration may be one search,
+The written plan and its review are most of this workflow's cost. A small,
+contained change does not earn that back, so it gets its one independent
+review on the finished diff instead of on a plan. Choose the lane once
+exploration shows what the change touches, tell the user which lane and why
+in one line, and name the lane in the PR's collapsed proof block.
+
+**Light lane**, when all of these hold:
+
+- 50 changed lines of non-test code or fewer, in one directory or feature.
+- No change to: a data schema or migration; authentication or permissions;
+  money; secrets or cryptography; personal data; deleting or overwriting
+  stored data; input handling at a trust boundary; dependencies; CI, build or
+  deploy config; or a public interface (an exported function, CLI flag, HTTP
+  route, config key, file format or event that code outside the change, or
+  other people, rely on).
+- The request reads one way, and exploration found no surprise.
+- You maintain the base repository: `viewerPermission` is `WRITE`, `MAINTAIN`
+  or `ADMIN`. Elsewhere a rejected approach costs a review round that may
+  never come, so the plan is reviewed first.
+- An independent reviewer is available for gate 8, which does not accept
+  self-review.
+
+**Full lane** for everything else, and whenever you are unsure.
+
+What the light lane changes:
+
+- Gate 3: the plan holds only Findings (a few lines: the commands, and why
+  this lane), Request, Steps, Tests and Acceptance criteria, plus Deviations
+  if the build departs from them.
+- Gate 4 does not run.
+- Gate 8 runs, so the review reads the real diff.
+
+Nothing else changes: the branch, tests that fail without the change, every
+check in gate 6, and the PR. If a light-lane condition stops holding during
+the build, stop, complete the plan, run gate 4 on it, and continue in the full
+lane. The gate 6 cross-check tests the finished diff against these conditions
+once more.
+
+Within a lane, depth scales with the change: exploration may be one search,
 the plan ten lines, the challenge a short review, the evidence one test run.
-What does not shrink: the branch, the tests that prove it, and the PR.
 
 Use `$WORK/plan.md`, `$WORK/challenge.md` and `$WORK/evidence/` throughout. If
 your harness has its own plan file or plan mode, use that for the plan instead.
@@ -191,8 +228,9 @@ rests on a wrong premise, or a much cheaper route exists, tell the user now.
 
 ## Gate 3: Plan
 
-Write `$WORK/plan.md` using [references/plan-template.md](references/plan-template.md).
-The plan is what you will be checked against at gate 6, so its acceptance
+Write `$WORK/plan.md` using [references/plan-template.md](references/plan-template.md);
+in the light lane, only the sections it marks as always needed. The plan is
+what you will be checked against at gate 6, so its acceptance
 criteria must be observable: a command and its expected output, or a behaviour
 someone can watch happen.
 
@@ -205,7 +243,8 @@ their priorities, or changes to existing behaviour others rely on.
 
 ## Gate 4: Challenge
 
-A plan reviewed only by its author keeps the author's blind spots. Hand it to
+Full lane only. A plan reviewed only by its author keeps the author's blind
+spots. Hand it to
 a reviewer with none of your context, whose job is to find what is wrong with
 it. [references/challenge-brief.md](references/challenge-brief.md) has who may
 review, the prompt, and how to handle the report. Give the reviewer no
@@ -259,8 +298,12 @@ line against `git diff "origin/$DEFAULT"...HEAD`:
 - Each changed file: accounted for by the plan. Unplanned changes are either
   justified in the plan or reverted.
 
-Record the result in `$WORK/plan.md`; a short summary goes into the PR's
-collapsed proof block.
+In the light lane, also check the finished diff against the light-lane
+conditions; if one no longer holds, run gate 4's review on the plan and the
+diff now.
+
+Write the result once, in the PR's collapsed proof block: the proof for each
+criterion, and the unplanned files or "none".
 
 **3. Run it.** Start the application locally and use the change the way a user
 would. For anything with a UI, drive a real browser through the affected flow
@@ -269,10 +312,13 @@ steps a user would do, plus at least one failure path. Follow
 [references/evidence.md](references/evidence.md) to capture screenshots as you
 go, each with a red box around what changed, and a recording when the change
 alters the user flow. For a change with no UI, the evidence is terminal output:
-the command, and what it printed, before and after.
+the command, and what it printed, before and after; of evidence.md you then
+need only "What to capture" and the attaching section for your forge.
 
-If the walkthrough finds a bug, fix it, re-run the checks, and capture again.
-Evidence must show the final code.
+If the walkthrough finds a bug, fix it, re-run the tests that cover the fix,
+and capture again whatever the fix changed on screen. When the walkthrough is
+clean, run check 1 once more if any code changed since its last run: the
+results in the PR must come from the final code.
 
 **4. Clean up.** Stop servers you started, remove temporary files and debug
 output, and confirm `git status` shows only what you intend to ship.
@@ -299,10 +345,19 @@ the repo has it. Do not merge; merging is the reviewer's decision.
 
 ## Gate 8: Contest
 
-This gate applies when the PR's base repository is public and the user is not
-one of its maintainers: `gh repo view <base> --json visibility,viewerPermission`
-shows `PUBLIC` and a permission of `READ`, `TRIAGE` or none. Otherwise skip it;
-nothing needs saying in the PR.
+This gate applies in two cases. In the light lane, where it is the change's
+one independent review. And when the PR's base repository is public and the
+user is not one of its maintainers:
+`gh repo view <base> --json visibility,viewerPermission` shows `PUBLIC` and a
+permission of `READ`, `TRIAGE` or none. Otherwise skip it; nothing needs
+saying in the PR.
+
+A review of the open PR that the harness or the user's own rules already
+require counts as this gate, with no second one, only when it meets the same
+bar: it runs before your final report, in a fresh context, on the same model
+as you or a stronger one, with the contest prompt or an equivalent, and you
+handle its findings as contest-brief.md says. An automatic bot review does
+not count.
 
 A maintainer of an open-source project owes you nothing and has minutes for a
 stranger's PR. Each problem they find costs a review round that may never
@@ -315,8 +370,10 @@ read-only prompt, and how to handle the report. Do not give the reviewer your
 reasoning, the plan or the gate 4 report. Save its report to `$WORK/contest.md`.
 
 Then go through every finding and either fix it or write one line saying why
-not. Fixes are new commits on the same branch, re-proved as in gate 6; do not
-rewrite pushed history. Re-read the PR once more. A finding that turns on
+not. Fixes are new commits on the same branch; do not rewrite pushed history.
+Re-run the tests that cover each fix and recapture the evidence it changed;
+after the last fix, run gate 6's check 1 once on the final code and update
+the results in the PR. Re-read the PR only if its description changed. A finding that turns on
 something only the user can decide goes to the user before you act on it.
 
 Run one round, and a second only when the fixes changed the design.
