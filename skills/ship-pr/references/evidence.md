@@ -250,4 +250,6 @@ In the rendered HTML, each image should be an `<img>` and each video a
 curl -sIL -o /dev/null -w '%{http_code}\n' -H "Authorization: token $(gh auth token)" "<url>"
 ```
 
-A broken image means fix it and check again before reporting anything.
+Where you have a logged-in browser session, opening the PR page and taking a
+screenshot of it is the most direct check. A broken image means fix it and
+check again before reporting anything.

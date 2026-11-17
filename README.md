@@ -26,9 +26,9 @@ Windsurf and Antigravity.
 
 A small, contained change in a repository you maintain takes the light lane:
 a short plan, no plan review, and its one independent review on the open PR.
-Anything that touches a schema, permissions, money, secrets, dependencies or
-an interface others rely on takes the full lane, as does anything the agent is
-unsure about.
+Anything that touches a schema, permissions, money, secrets, stored data,
+dependencies, build config or a public interface takes the full lane, as does
+anything the agent is unsure about.
 
 Until the last gate passes, the agent reports progress, not "done". If a gate is
 blocked, it opens a draft PR and says what is missing.

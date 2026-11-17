@@ -37,6 +37,7 @@ config change, something not verified.>
 - Typecheck, lint, build: clean.
 - Each acceptance criterion from the plan is met; proof for each: AC1
   screenshot above, AC2 `orders.e2e.ts`.
+- Lane: light or full. Files the plan did not name: none.
 - Any level marked n/a, any deviation from the plan, and pre-existing
   failures, each with one line of why.
 
