@@ -3,6 +3,9 @@
 Copy this into the plan file and fill it in. Keep it short enough that a
 reviewer reads all of it. Delete a section only if it truly has nothing to say.
 
+Always needed: Request, Steps, Tests, Acceptance criteria. The light lane
+writes only those four, plus Deviations if the build departs from them.
+
 ```markdown
 # Plan: <one-line title>
 

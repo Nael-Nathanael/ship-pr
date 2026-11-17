@@ -240,7 +240,6 @@ work as not done until they are in the PR.
 After the PR exists, check that the evidence is really there.
 
 ```bash
-gh pr view <n> --json body --jq .body          # every local path was rewritten to a URL
 gh api "repos/<owner>/<repo>/pulls/<n>" -H "Accept: application/vnd.github.full+json" --jq .body_html
 ```
 
@@ -251,6 +250,4 @@ In the rendered HTML, each image should be an `<img>` and each video a
 curl -sIL -o /dev/null -w '%{http_code}\n' -H "Authorization: token $(gh auth token)" "<url>"
 ```
 
-Where you have a logged-in browser session, opening the PR page and taking a
-screenshot of it is the most direct check. A broken image means fix it and
-check again before reporting anything.
+A broken image means fix it and check again before reporting anything.

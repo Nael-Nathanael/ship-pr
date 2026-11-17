@@ -68,7 +68,8 @@ style preferences or praise.
 
 Save it as received. Then for each finding:
 
-- **Fix**: a new commit on the same branch, proved again as in gate 6. Update
+- **Fix**: a new commit on the same branch, proved again in proportion: the
+  checks and tests that cover the fix, and the evidence it changed. Update
   the PR description if the fix changes what it says.
 - **Reject**: write the reason. "The reviewer misread X, see file:line" is a
   reason. "I disagree" is not.

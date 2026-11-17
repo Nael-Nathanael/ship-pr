@@ -18,11 +18,17 @@ Windsurf and Antigravity.
 | 1 | Branch | Work branch cut from the up-to-date default branch |
 | 2 | Explore | Open PRs or issues already doing the work, and code that can be reused |
 | 3 | Plan | Plan file with checkable acceptance criteria |
-| 4 | Challenge | An independent reviewer attacks the plan; the plan is revised |
+| 4 | Challenge | Full lane: an independent reviewer attacks the plan; the plan is revised |
 | 5 | Build | Code plus unit, integration and end-to-end tests, worked from a task checklist |
 | 6 | Prove | Checks pass, result compared with the plan, app walked through in a browser |
 | 7 | Publish | Open PR with the evidence in the description |
-| 8 | Contest | Open-source projects you do not maintain: a reviewer on the strongest available model attacks the open PR; the PR is revised |
+| 8 | Contest | Light lane, and open-source projects you do not maintain: an independent reviewer on the same model attacks the open PR; the PR is revised |
+
+A small, contained change in a repository you maintain takes the light lane:
+a short plan, no plan review, and its one independent review on the open PR.
+Anything that touches a schema, permissions, money, secrets, dependencies or
+an interface others rely on takes the full lane, as does anything the agent is
+unsure about.
 
 Until the last gate passes, the agent reports progress, not "done". If a gate is
 blocked, it opens a draft PR and says what is missing.

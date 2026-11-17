@@ -68,5 +68,6 @@ say so in the PR.
 
 ## Running
 
-Run the new tests alone first, then the whole suite, since the change can
-break something elsewhere. Paste the summary lines into the PR.
+While building, run only the new and touched tests. Run the whole suite once,
+at gate 6, since the change can break something elsewhere. Paste the summary
+lines into the PR.
